@@ -1,0 +1,9 @@
+{% render 'partials/head.liquid' %}
+<main class="collectie">
+    {% render 'partials/mycollection.liquid', 
+        plants: plants, 
+        zone_type: zone_type, 
+        current_path: current_path 
+    %}
+</main>
+{% render 'partials/foot.liquid', current_path: current_path %}

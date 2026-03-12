@@ -1,0 +1,30 @@
+    {% render 'partials/head.liquid' %}
+    <header>
+        <a href="/">
+            <img src="/assets/images/logo_transparent.webp" alt="">
+        </a>
+    </header>
+    <main class="welcome">
+        <section>
+            {% render 'partials/carousel.liquid', 
+                
+                titlestep1:'Welkom bij de bloemenveld frankendael webapp', 
+                descriptionstep1:'De webapp waarbij je bloemenveld frankendael leert kennen door drie handige functies',
+                contentstep1:'/assets/images/welcome.webp',
+                classstep1:'welcome',
+
+                titlestep2:'Veldverkenner',
+                descriptionstep2:'De veldverkenner is het pareltje van de webapp, hier leer je door een interactieve ervaring over wat er groeit op het veld',
+
+                titlestep3:'Nieuws',
+                descriptionstep3:'Nooit iets missen over het veld? kijk dan op de nieuws pagina voor alle updates',
+
+                titlestep4:'Collectie',
+                descriptionstep4:'Alles wat je bij de veldverkenner vind, word hier opgeslagen',
+
+                current_path: current_path,
+            %}
+        </section>
+    </main>
+</body>
+</html>

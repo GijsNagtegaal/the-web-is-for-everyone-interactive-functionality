@@ -1,0 +1,10 @@
+{% render 'partials/head.liquid' %}
+<main>
+    {% render 'partials/detailpage.liquid'
+        title: plant.name,
+        image: plant.in_bloom,
+        body: plant.description,
+        omscription: plant.omscription
+    %}
+</main>
+{% render 'partials/foot.liquid', current_path: current_path %}

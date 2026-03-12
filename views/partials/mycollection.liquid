@@ -1,0 +1,27 @@
+<ul class="my-collection">
+    {% if plants.size > 0 %}
+        
+        {% if current_path == "/" %}
+            {% assign loop_limit = 4 %}
+        {% else %}
+            {% assign loop_limit = plants.size %}
+        {% endif %}
+
+        {% for plant in plants limit: loop_limit %}
+        <li class="{{ plant.main_zone.type }}">
+            <a href="/veldverkenner/{{ plant.main_zone.slug }}/{{ plant.slug }}">
+                <article>
+                    <h2>{{ plant.name }}</h2>
+                    <h3 class="italic">{{ plant.latin | truncate: 20 }}</h3>
+                </article>
+                <img class="square" src="https://fdnd-agency.directus.app/assets/{{ plant.in_bloom }}" alt="">
+            </a>    
+        </li>
+        {% endfor %}
+
+    {% else %}
+        <p>Je hebt nog niks gespaard. 
+            Start de <span> Veldverkenner </span> om meer te weten te komen over wat er groeit en je collectie aan te vullen.
+        </p>
+    {% endif %}
+</ul>

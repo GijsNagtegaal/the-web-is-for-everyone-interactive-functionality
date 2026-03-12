@@ -1,0 +1,10 @@
+{% render 'partials/head.liquid' %}
+<main>
+    {% render 'partials/detailpage.liquid'
+        title: newsItem.title,
+        image: newsItem.image,
+        body: newsItem.body,
+        date: newsItem.date
+    %}
+</main>
+{% render 'partials/foot.liquid', current_path: current_path %}

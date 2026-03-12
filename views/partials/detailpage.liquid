@@ -1,0 +1,23 @@
+<section class="detailpage">
+    {% render 'partials/linkback.liquid' %}
+    {% render 'partials/general-heading.liquid',
+        heading_level: 2,
+        content: title,
+    %}
+    <img class="landscape" src="https://fdnd-agency.directus.app/assets/{{ image }}" alt="">
+    {% if date %}
+        <p class="date"> Geplaatst op {{ date }}</p>
+    {% endif %}
+    {% if omscription %}
+    <article class="detaillist-plants">
+        <p><span class="bold"> Ecologische rol:</span> Insecten die in de stengels schuilen dienen als voedselbron voor vogels,</p>
+        <p><span class="bold">Gebruik:</span> de wortel van deze plant is vlezig en sappig en kun je rauw of gekookt eten</p>
+        <p><span class="bold">Bodem:</span> Inheems, oorsprong: Middellandse Zee. Populaire moestuinplant.</p>
+        <p><span class="bold">Leuke weetjes:</span> de zaden zijn zeer voedzaam en rijk aan het omega-6-vetzuur gammalinoleenzuur.</p>
+    </article>
+    {% endif %}
+    {% if date %}
+        <p>{{ body }}</p>
+    {% endif %}
+    
+</section>

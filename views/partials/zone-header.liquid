@@ -1,0 +1,9 @@
+<header class="opdrachten-header {{ zone_type }}">
+    {% render 'partials/linkback.liquid' %}
+    <h1>{{ zone_name }}</h1>
+    <p>Hier komt en leuk stukje tekst over de zone</p>
+    <div>
+        <label for="file">1/2</label>
+        <progress class="{{ zone_type }}sierlint" id="opdracht-{{ zone_name }}-{{ slug }}" max="100" value="50"></progress>
+    </div>
+</header>

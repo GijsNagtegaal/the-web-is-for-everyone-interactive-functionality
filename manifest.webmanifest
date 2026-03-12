@@ -1,0 +1,33 @@
+{
+"name": "Bloemenveld Frankendael",
+"short_name": "Bloemenveld",
+"scope": "/",
+"start_url": "/",
+"display": "standalone",
+"display_override": ["standalone", "fullscreen", "minimal-ui"],
+"theme_color": "#224455",
+"background_color": "#224455",
+"icons": [
+    {
+    "src": "assets/images/alium.webp",
+    "sizes": "180x180",
+    "type": "image/png"
+    },
+    {
+    "src": "assets/images/alium.webp",
+    "sizes": "192x192",
+    "type": "image/png"
+    },
+    {
+    "src": "assets/images/alium.webp",
+    "sizes": "512x512",
+    "type": "image/png"
+    },
+    {
+    "src": "assets/images/alium.webp",
+    "sizes": "192x192",
+    "type": "image/png",
+    "purpose": "any maskable"
+    }
+]
+}

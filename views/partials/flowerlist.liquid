@@ -1,0 +1,38 @@
+{% if plants.size > 0 %}
+    <ul class="flowerlist">
+    {% for plant in plants %}
+        {% if plant.collected %}
+            <li>
+                <img class="portrait" src="/assets/images/alium.webp" alt="{{ plant.name }}">
+                <article>
+                    <h2>{{ plant.name }}</h2>
+                    <p>{{ plant.description }}</p>
+                    {% if zone_slug %}
+                        <a class="styled quest plantcard" href="/veldverkenner/{{ zone_slug }}/{{ plant.slug }}">
+                            Meer over deze plant
+                        </a>
+                    {% endif %}
+                </article>
+            </li>
+        {% else %}
+            <li>
+                <img class="portrait" src="/assets/images/placeholder.webp" alt="Nog niet ontdekt">
+                <article>
+                    <h2>Tja.. hoe zou ie heten?</h2>
+                    <p>Helaas! deze plant heb jij nog niet ontdekt</p>
+                    
+                    {% if zone_slug and plant.quest %}
+                        <a class="styled quest plantcard" href="/veldverkenner/{{ zone_slug }}/{{ plant.quest.slug }}">
+                            Verdien deze plant
+                        </a>
+                    {% else %}
+                        <p>Geen opdracht beschikbaar</p>
+                    {% endif %}
+                </article>
+            </li>
+        {% endif %}
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>Er zijn nu geen planten in deze zone</p>
+{% endif %}
