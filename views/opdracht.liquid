@@ -76,9 +76,8 @@
             <section class="start">
                 {% render 'partials/general-heading.liquid',
                     heading_level: 1,
-                    content: quest.question_title,
+                    content: quest_title,
                 %}
-                <p>{{ quest.question_text }}</p>
 
                 {% if quest.type =='button' %}
                     <img class="landscape" src="/assets/images/alium.webp" alt="">
@@ -88,7 +87,7 @@
                     {% for option in quest.options %}
                         {% if quest.type == 'button' %}
                             <a href="?step={% if option.value == quest.correct_answer %}correct{% else %}incorrect{% endif %}" class="styled awnser">
-                                {{ option.label }}
+                                {{ quest_options }}
                             </a>
                         {% elsif quest.type == 'image' %}
                             <a href="?step={% if option.value == quest.correct_answer %}correct{% else %}incorrect{% endif %}" class="quiz-image">
