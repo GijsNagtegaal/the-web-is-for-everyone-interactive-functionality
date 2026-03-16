@@ -104,7 +104,13 @@
                 <div class="result success">
                     <h2>🎉 Helemaal goed!</h2>
                     <p>Je hebt {{ quest.xp }} XP verdiend.</p>
-                    <a href="/veldverkenner/{{ zone_slug }}" class="styled quest">Volgende opdracht</a>
+                <form method="POST">
+                    <input type="hidden" name="plant_id" value="{{ quest.plant_id }}">
+
+                    <button type="submit" class="styled quest">
+                        Opdracht voltooien
+                    </button>
+                </form>
                 </div>
             </section>
 
