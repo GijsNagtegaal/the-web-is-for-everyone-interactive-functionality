@@ -4,7 +4,10 @@
         <article class="card">
             {% case i %}
                 {% when 1 %}
-                    <h2>{{titlestep1}}</h2>
+                    {% render 'partials/general-heading.liquid',
+                        heading_level: 2,
+                        content: titlestep1,
+                    %}
                     <p>{{descriptionstep1}}</p>
                     {% if contentstep1 %}
                         <img src="{{ contentstep1 }}" class="{{ classstep1 }}" alt="{{altstep1}}">
@@ -12,7 +15,10 @@
 
                 {% when 2 %}
 
-                    <h2>{{titlestep2}}</h2>
+                    {% render 'partials/general-heading.liquid',
+                        heading_level: 2,
+                        content: titlestep2,
+                    %}
                     <p>{{descriptionstep2}}</p>
                     {% if current_path == '/welcome' %}
                         <svg width="276" height="295" viewBox="0 0 276 295" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -23,7 +29,10 @@
                     {% endif %}
 
                 {% when 3 %}
-                    <h2>{{ titlestep3 }}</h2>
+                    {% render 'partials/general-heading.liquid',
+                        heading_level: 2,
+                        content: titlestep3,
+                    %}
                     <p>{{descriptionstep3}}</p>
                     {% if current_path contains 'welcome' %}
                         <svg width="231" height="221" viewBox="0 0 231 221" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -34,7 +43,10 @@
                     {% endif %}
 
                 {% when 4 %}
-                    <h2>{{titlestep4}}</h2>
+                    {% render 'partials/general-heading.liquid',
+                        heading_level: 2,
+                        content: titlestep4,
+                    %}
                     <p>{{descriptionstep4}}</p>
                     {% if current_path contains 'welcome' %}
                         <svg width="231" height="238" viewBox="0 0 231 238" fill="none" xmlns="http://www.w3.org/2000/svg">
