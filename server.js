@@ -450,3 +450,52 @@ app.set('port', process.env.PORT || 8000)
 app.listen(app.get('port'), () => {
     console.log(`Started on http://localhost:${app.get('port')}`)
 })
+
+
+
+
+
+
+// override home for practicum
+// app.get('/', async function(req, res) {
+
+//     const pizzaResponse = await fetch('https://fdnd-agency.directus.app/items/demo_pizzas')
+//     const pizzasJson = await pizzaResponse.json()
+
+//     res.render('practicum.liquid', {
+//         pizzas: pizzasJson.data,
+
+//     })
+// })
+
+// app.get('/pizzas', async function(req, res) {
+
+//     const params = new URLSearchParams()
+
+//     params.set('sort', 'name')
+//     params.set('meta', 'total_count, filter_count')
+
+//     if (req.query.type) {
+//         params.set('filter[type] [_eq]: req.query.type')
+//     }
+
+//     const pizzaResponse = await fetch('https://fdnd-agency.directus.app/items/demo_pizzas?' + params.toString() )
+//     const pizzasJson = await pizzaResponse.json()
+
+//     res.render('practicum.liquid', {
+//         pizzas: pizzasJson.data,
+//         meta: pizzasJson.meta,
+
+//     })
+// })
+
+// app.get('/pizza/:slug', async function(req, res) {
+
+//     const pizzaResponse = await fetch('https://fdnd-agency.directus.app/items/demo_pizzas?filter[slug] [_eq]=' + req.params.slug)
+//     const pizzaJson = await pizzaResponse.json()
+
+//     res.render('practicum.liquid', {
+//         pizzas: pizzaJson.data[0],
+
+//     })
+// })

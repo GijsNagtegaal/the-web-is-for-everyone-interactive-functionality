@@ -356,6 +356,32 @@ main.quest {
             }
         }
     }
+
+    section.correct {
+        article {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            svg {
+                width: 5rem;
+                height: 5rem;
+                background-color: var(--questbutton);
+                padding: 1rem;
+                border-radius: var(--border-round);
+            }
+
+            h1 {
+                font-size: 2rem;
+                text-align: center;
+            }
+        }
+    }
+
+    section.incorrect {
+
+    }
 }
 
 /***********************************

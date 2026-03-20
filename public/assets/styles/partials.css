@@ -111,7 +111,10 @@ ul.flowerlist {
     }
 
     img {
-        width: 30%;
+        display: flex;
+        width: fit-content;
+        max-width: 35%;
+        border-radius: .5rem 0 0 .5rem;
     }
 
     article {
