@@ -369,7 +369,7 @@ app.get('/veldverkenner/:zone_slug/:item_slug', async (request, response, next) 
 // POST: Save quest progress to Directus
 app.post('/veldverkenner/:zone_slug/:item_slug', async (request, response) => {
     const { plant_id, user_id } = request.body
-    const { zone_slug } = request.params
+    const { zone_slug } = request.params 
     
     try {
         const userId = Number.isFinite(parseInt(user_id, 10)) ? parseInt(user_id, 10) : USER_ID
@@ -378,9 +378,8 @@ app.post('/veldverkenner/:zone_slug/:item_slug', async (request, response) => {
             return response.status(400).send('Ongeldige plant_id')
         }
 
-        // Avoid duplicates (Directus backend already shows duplicates)
         if (await userAlreadyCollectedPlant({ userId, plantId })) {
-            return response.redirect('/veldverkenner')
+            return response.redirect(`/veldverkenner/${zone_slug}`)
         }
 
         const res = await fetch(`${API_BASE}/frankendael_users_plants`, {
@@ -393,8 +392,7 @@ app.post('/veldverkenner/:zone_slug/:item_slug', async (request, response) => {
         })
 
         if (res.ok) {
-            // Success: Redirect back to the field page
-            response.redirect('/veldverkenner')
+            response.redirect(`/veldverkenner/${zone_slug}`)
         } else {
             const errorMsg = await res.text()
             console.error('Directus error:', errorMsg)
@@ -425,12 +423,21 @@ app.get('/collectie', async (request, response) => {
         fetchData('frankendael_zones')
     ])
 
-    const plantsWithZoneDetails = allPlants.map(currentPlant => {
-        currentPlant.main_zone = allZones.find(zone => zone.id === currentPlant.zones?.[0])
-        return currentPlant
+    const normalizedPlants = normalizePlants(allPlants)
+
+    const plantsWithZoneDetails = normalizedPlants.map(currentPlant => {
+
+        const matched_zone = allZones.find(zone => zone.id === currentPlant.zones?.[0])
+        return { 
+            ...currentPlant, 
+            main_zone: matched_zone 
+        }
     })
 
-    response.render('collectie.liquid', { plants: plantsWithZoneDetails, zone_type: 'collectie' })
+    response.render('collectie.liquid', { 
+        plants: plantsWithZoneDetails, 
+        zone_type: 'collectie' 
+    })
 })
 
 // Error Handling
