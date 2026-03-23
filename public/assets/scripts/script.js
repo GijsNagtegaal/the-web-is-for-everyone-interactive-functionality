@@ -9,17 +9,26 @@ back.addEventListener('click', (event) => {
     }
 });
 
+const collectionIcon = document.querySelector('.collection-icon');
+const formSumbit = document.querySelector('.collectbutton');
 
+formSumbit.addEventListener('submit', function(event) {
+    
+    event.preventDefault();
 
+    collectionIcon.classList.toggle('active');
 
-// URL Cleanup logic for the Popovers
+    setTimeout(() => {
+        this.submit(); 
+    }, 1000); 
+});
+
 document.querySelectorAll('.opdracht-popover').forEach(popover => {
     popover.addEventListener('toggle', (event) => {
         if (event.newState === 'closed') {
-            // Removes the #hash from the URL when the user closes the popover
+        
             history.replaceState(null, document.title, window.location.pathname + window.location.search);
             
-            // Reset the slider to the first question when closed
             popover.querySelector('ul').scrollTo({ left: 0 });
         }
     });

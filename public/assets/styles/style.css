@@ -465,6 +465,13 @@ footer.main-footer {
                     fill: var(--active);
                 }
             }
+
+            .collection-icon.active {
+                animation-name: popscale;
+                animation-duration: .5s;
+                animation-timing-function: ease-in;
+                animation-delay: .7s;
+            }
         }
     }
 }
@@ -483,6 +490,20 @@ Animations
         transform 0.5s ease-out, 
         display 0.5s allow-discrete, 
         overlay 0.5s allow-discrete;
+}
+
+@keyframes popscale {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.3);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 

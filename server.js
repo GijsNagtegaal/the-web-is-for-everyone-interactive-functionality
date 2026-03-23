@@ -440,10 +440,14 @@ app.get('/collectie', async (request, response) => {
     })
 })
 
-// Error Handling
-app.use((request, response) => {
-    response.status(404).render('404.liquid')
-})
+// error handling
+app.use((err, req, res, next) => {
+    console.error("🔥 Server Error:", err.stack);
+    res.status(500).render('404.liquid', { 
+        error_title: "Er ging iets mis",
+        error_message: "Onze excuses, de server heeft een foutje gemaakt." 
+    });
+});
 
 // Start Server
 app.set('port', process.env.PORT || 8000)

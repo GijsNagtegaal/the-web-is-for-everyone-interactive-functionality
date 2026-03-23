@@ -114,7 +114,7 @@
                     %}
                     <p>Je hebt {{ quest.xp }} XP verdiend.</p>
 
-                    <form action="/veldverkenner/{{ zone_slug }}/{{ quest.slug }}" method="POST">
+                    <form class="collectbutton" action="/veldverkenner/{{ zone_slug }}/{{ quest.slug }}" method="POST">
                         <input type="hidden" name="user_id" value="{{ user_id }}">
                         <input type="hidden" name="plant_id" value="{{ quest.plant_id }}">
                         
