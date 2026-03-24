@@ -11,16 +11,18 @@ back.addEventListener('click', (event) => {
 
 const collectionIcon = document.querySelector('.collection-icon');
 const formSumbit = document.querySelector('.collectbutton');
+const plantImage = document.querySelector('.plant-animated');
 
 formSumbit.addEventListener('submit', function(event) {
     
     event.preventDefault();
 
+    plantImage.classList.toggle('active');
     collectionIcon.classList.toggle('active');
 
     setTimeout(() => {
         this.submit(); 
-    }, 1000); 
+    }, 1300); 
 });
 
 document.querySelectorAll('.opdracht-popover').forEach(popover => {
@@ -33,5 +35,4 @@ document.querySelectorAll('.opdracht-popover').forEach(popover => {
         }
     });
 });
-
 

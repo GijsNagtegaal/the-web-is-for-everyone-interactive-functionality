@@ -136,6 +136,25 @@ main:not(.veldverkenner) {
     height: 2.5rem;
     border-radius: 0.625rem;
     color: var(--dark-text);
+    transition: scale, translate, .4s;
+
+    &:hover {
+        transform: 
+            scale(1.06)
+        ;
+        
+    } 
+
+    &:active {
+        animation-name: hoverbutton;
+        animation-duration: .4s;
+        animation-iteration-count: 1;
+        animation-timing-function: ease-in-out;
+    }
+
+    &:focus-visible {
+
+    }
 
     /* filled link button look */
     &.primary {

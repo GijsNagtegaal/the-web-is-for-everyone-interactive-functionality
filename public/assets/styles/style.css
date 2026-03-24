@@ -319,6 +319,7 @@ quest page
 ***********************************/
 
 main.quest {
+    position: relative;
     section {
         p {
             margin-block: 1rem;
@@ -358,6 +359,7 @@ main.quest {
     }
 
     section.correct {
+
         article {
             display: flex;
             flex-direction: column;
@@ -377,10 +379,27 @@ main.quest {
                 text-align: center;
             }
         }
-    }
 
-    section.incorrect {
+        .plant-animated {
+            width: 6rem;
+            height: 6rem;
+            border-radius: var(--border-round);
+            transform: translate(80vw, 70dvh) scale(0.8);
+            display: flex;
+            position: fixed;
+            z-index: -1;
+            
+            &.active {
+                animation-name: addtocollection;
+                animation-duration: 1s;
+                animation-timing-function: linear; 
+            }   
+        }
 
+        section.incorrect {
+            bottom: 0;
+            right: 0;
+        }
     }
 }
 
@@ -468,9 +487,9 @@ footer.main-footer {
 
             .collection-icon.active {
                 animation-name: popscale;
-                animation-duration: .5s;
+                animation-duration: .4s;
                 animation-timing-function: ease-in;
-                animation-delay: .7s;
+                animation-delay: .8s;
             }
         }
     }
@@ -486,7 +505,7 @@ Animations
     
     /* to transition the 'display' and 'overlay' properties */
     transition: 
-        opacity 0.5s ease-out, 
+        opacity 0.5s ease-out,  
         transform 0.5s ease-out, 
         display 0.5s allow-discrete, 
         overlay 0.5s allow-discrete;
@@ -506,4 +525,38 @@ Animations
     }
 }
 
-
+@keyframes addtocollection {
+    0% {
+        transform: translate(-100vw, 70dvh) scale(1) rotate(0deg);
+    }
+    10% {
+        transform: translate(-80vw, 55dvh) scale(1.05) rotate(5deg);
+    }
+    20% {
+        transform: translate(-55vw, 42dvh) scale(1.1) rotate(10deg);
+    }
+    30% {
+        transform: translate(-30vw, 32dvh) scale(1.15) rotate(15deg);
+    }
+    40% {
+        transform: translate(-5vw, 26dvh) scale(1.18) rotate(18deg);
+    }
+    50% {
+        transform: translate(20vw, 25dvh) scale(1.2) rotate(20deg);
+    }
+    60% {
+        transform: translate(45vw, 28dvh) scale(1.1) rotate(15deg);
+    }
+    70% {
+        transform: translate(65vw, 38dvh) scale(1.0) rotate(5deg);
+    }
+    80% {
+        transform: translate(70vw, 52dvh) scale(0.9) rotate(-5deg);
+    }
+    90% {
+        transform: translate(73vw, 62dvh) scale(0.85) rotate(-10deg);
+    }
+    100% {
+        transform: translate(78vw, 70dvh) scale(0.8) rotate(-12deg);
+    }
+}

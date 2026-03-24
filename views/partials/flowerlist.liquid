@@ -9,7 +9,7 @@
                         heading_level: 2,
                         content: plant.name,
                     %}
-                    <p>{{ plant.description }}</p>
+                    <p>{{ plant.description | truncatewords: 10 }}</p>
                     {% if zone_slug %}
                         <a class="styled quest plantcard" href="/veldverkenner/{{ zone_slug }}/{{ plant.slug }}">
                             Meer over deze plant

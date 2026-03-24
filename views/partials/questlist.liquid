@@ -23,7 +23,7 @@
                         </hgroup>
                     </article>
                     
-                    <p>{{ plant.quest.description }}</p>
+                    <p>{{ plant.quest.description | truncatewords: 10 }}</p>
                 </section>
 
                 <a class="styled quest card" href="/veldverkenner/{{ zone_slug }}/{{ plant.quest.slug }}">
