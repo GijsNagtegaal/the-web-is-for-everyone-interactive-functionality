@@ -63,8 +63,16 @@ img, video {
 
 body {
 
+
     color-scheme: light dark;
 
+    &:has(#color-mode-light:checked) {
+    color-scheme: light;
+    }
+    
+    &:has(#color-mode-dark:checked) {
+        color-scheme: dark;
+    }
     /* Added fallback for light dark mode dark mode */
     @media (prefers-color-scheme: dark) {
         --light-background: hsl(0, 0%, 12%);
@@ -105,9 +113,9 @@ body {
 
     /* accents and borders */
     --active: light-dark(#00602d, #00b253);
-    --light-border:#ffffff;
+    --light-border:#F7F7F7;
     --lighter-border:#B0B0B0;
-    --dark-border: light-dark(#1b1b1b,#ffffff);
+    --dark-border: light-dark(#1b1b1b,#F7F7F7);
 
     /* --------- borders --------- */
     --border-image: 1rem;

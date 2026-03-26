@@ -1,4 +1,65 @@
 {% render 'partials/head.liquid' %}
 <main>
-    
+    {% render 'partials/linkback.liquid' %}
+    <section>
+        {% assign welcome_message = "Welkom op jouw account " | append: user.name | append: "!" %}
+        {% render 'partials/general-heading.liquid',
+            heading_level: 1,
+            content: welcome_message,
+        %}
+        <figure>
+            <img class="memoji" src="{{ chosen.memoji }} /assets/images/memoji.webp" alt="">
+        </figure>
+        <article>
+            
+            {% render 'partials/general-heading.liquid',
+                heading_level: 2,
+                content: user.name,
+            %}
+            <p>🪴 18 Planten verzameld</p>
+        </article>
+    </section>
+
+    <section>
+        {% assign progress = "Nog " | append: user.xp | append: "xp tot level 3" %}
+        {% render 'partials/general-heading.liquid',
+            heading_level: 2,
+            content: progress,
+        %}
+        <label for="">{{ user.xp }}</label>
+        <progress class="{{ zone_type }}sierlint" id="opdracht-{{ zone_name }}-{{ zone_slug }}" max="100" value="50"></progress>
+    </section>
+
+    <section>
+        {% assign progress = "Speciaal voor jou " | append: user.name | append: " :)" %}
+        {% render 'partials/general-heading.liquid',
+            heading_level: 2,
+            content: progress,
+        %}
+        <details>
+            <summary>Jouw badges</summary>
+            <p>hier komen jouw badges</p>
+        </details>
+        <details>
+            <summary>Jouw voorkeuren</summary>
+            <p>hier komen jouw voorkeuren</p>
+        </details>
+        <form action="/account" method="POST">
+            <button>Voortgang wissen</button>
+        </form>
+        <form action="/welcome" method="GET">
+            <button>Uitloggen</button>
+        </form>
+    </section>
 </main>
+
+
+{% comment %} <input type="radio" id="color-mode-dark" name="color-mode" />
+<label for="color-mode-dark" title="Use dark mode">Light☾</label>
+
+<input type="radio" id="color-mode-light" name="color-mode" />
+<label for="color-mode-light" title="Use light mode">Dark☼</label>
+
+<input type="radio" id="color-mode-auto" name="color-mode" checked="checked" />
+<label for="color-mode-auto" title="Use system light/dark mode setting">System</label>
+☾ ☼ {% endcomment %}

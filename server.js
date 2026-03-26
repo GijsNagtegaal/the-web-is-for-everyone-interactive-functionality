@@ -304,7 +304,8 @@ app.get('/account', async (req, res) => {
 
         // Render your account file (account.liquid or account.ejs)
         res.render('account.liquid', { 
-            user: user 
+            user: user,
+            current_path: req.path
         });
 
     } catch (error) {
@@ -312,6 +313,10 @@ app.get('/account', async (req, res) => {
         res.status(500).send("Error loading account data");
     }
 });
+
+app.get('/welcome', (req, res) => res.render('welcome.liquid', {
+    current_path: req.path
+}))
 
 // POST: Save quest progress to Directus
 app.post('/veldverkenner/:zone_slug/:item_slug', async (request, response) => {
