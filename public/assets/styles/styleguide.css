@@ -92,7 +92,7 @@ body {
 
     /* zone colors */
     --sierlint: #FFFFD3;
-    --voedseleiland: #CFE1B9;
+    --voedseleiland: #9CB693;
     --heuvel: #D4C8E2;
     --waterplandgebied: #daf1fe;
 
@@ -242,6 +242,10 @@ main:not(.veldverkenner) {
         color: white;
         justify-content: flex-start;
         min-height: 3rem;
+    }
+
+    &.logout {
+        background-color: var(--incorrect);
     }
 
     &.start {
