@@ -20,11 +20,11 @@
 </section>
 
 <section>
-    <h2 class="headingplanten">Planten</h2>
     {% render 'partials/flowerlist.liquid', 
         plants: plants, 
         zone_type: zone.type, 
-        zone_slug: zone_slug
+        zone_slug: zone_slug,
+        allPlants: allPlants
     %}
 </section>
 </main>

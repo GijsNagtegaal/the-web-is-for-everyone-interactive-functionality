@@ -1,4 +1,5 @@
 {% if plants.size > 0 %}
+    <h2>Planten</h2>
     <ul class="flowerlist">
     {% for plant in plants %}
         {% if plant.collected %}
@@ -40,5 +41,13 @@
     {% endfor %}
     </ul>
 {% else %}
-    <p>Er zijn nu geen planten in deze zone</p>
+    {% render 'partials/general-heading.liquid',
+        heading_level: 2,
+        content: "Mijn collectie",
+    %}
+    {% render 'partials/mycollection.liquid', 
+        zone_type: zone_type, 
+        current_path: current_path,
+        plants: allPlants
+    %}
 {% endif %}

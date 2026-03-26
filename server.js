@@ -139,9 +139,10 @@ app.get('/veldverkenner', async (req, res) => {
 
 // Zone Detail — show ALL plants in the zone
 app.get('/veldverkenner/:zone_slug', async (req, res) => {
-    const [zoneData, collectedIds] = await Promise.all([
+    const [zoneData, collectedPlants, allZones] = await Promise.all([
         fetchData(`frankendael_zones?filter[slug][_eq]=${req.params.zone_slug}&fields=*.*`),
-        getCollectedIds(USER_ID)
+        getCollectedPlants(USER_ID),
+        fetchData('frankendael_zones')
     ])
 
     const currentZone = zoneData[0]
@@ -151,24 +152,38 @@ app.get('/veldverkenner/:zone_slug', async (req, res) => {
         ? await fetchData(`frankendael_plants?filter[id][_in]=${plantIds.join(',')}&fields=*.*`) 
         : []
 
+    const collectedIds = new Set(collectedPlants.map(p => p.id))
+
     const normalizedPlants = plantsInZone.map(plant => {
         const normalized = normalizePlant(plant)
+        const firstZoneEntry = plant.zones?.[0]
+        const zoneId = typeof firstZoneEntry === 'object' ? firstZoneEntry.frankendael_zones_id : firstZoneEntry
         return { 
             ...normalized, 
             collected: collectedIds.has(plant.id), 
-            quest: plant.quest_title ? normalized : null 
+            quest: plant.quest_title ? normalized : null,
+            main_zone: allZones.find(zone => zone.id === zoneId) ?? null
+        }
+    })
+
+    const allPlants = collectedPlants.map(plant => {
+        const firstZoneEntry = plant.zones?.[0]
+        const zoneId = typeof firstZoneEntry === 'object' ? firstZoneEntry.frankendael_zones_id : firstZoneEntry
+        return {
+            ...normalizePlant(plant),
+            main_zone: allZones.find(zone => zone.id === zoneId) ?? null
         }
     })
 
     res.render('zone.liquid', { 
         zone: currentZone, 
         plants: normalizedPlants, 
+        allPlants: allPlants,
         zone_slug: req.params.zone_slug, 
         zone_type: currentZone.type,
         current_path: req.path
     })
 })
-
 // Quest Detail — always renders opdracht
 app.get('/veldverkenner/:zone_slug/:item_slug', async (req, res) => {
     const zoneData = await fetchData(`frankendael_zones?filter[slug][_eq]=${req.params.zone_slug}`)

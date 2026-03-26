@@ -339,6 +339,16 @@ progress {
     }
 }
 
+.empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    height: 6rem;
+    padding: 3rem 6rem;
+}
+
 /* images */
 
 img.square {
