@@ -19,15 +19,15 @@
 }
 
 ::view-transition-group(*) {
-    animation-duration: .33s;
+    animation-duration: .3s;
 }
 
 ::view-transition-old(root) {
-    animation: .33s ease-in both leave;
+    animation: .3s ease-in both leave;
 }
 
 ::view-transition-new(root) {
-    animation: .33s ease-in both enter;
+    animation: .3s ease-in both enter;
 }
 
 @media (prefers-reduced-motion: reduce) {
