@@ -12,7 +12,39 @@
     font-family: italic;
     font-style: italic;
     src: url(/assets/fonts/italic-font.ttf);
-}    
+} 
+
+@view-transition {
+    navigation: auto;
+}
+
+::view-transition-group(*) {
+    animation-duration: .33s;
+}
+
+::view-transition-old(root) {
+    animation: .33s ease-in both leave;
+}
+
+::view-transition-new(root) {
+    animation: .33s ease-in both enter;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*) {
+        animation-duration: 0s;
+    }
+}  
+
+@keyframes leave {
+    from { opacity: 1; }
+    to { opacity: 0; transform: translateY(-0.625rem); }
+}
+
+@keyframes enter {
+    from { opacity: 0; transform: translateY(-0.625rem); }
+    to { opacity: 1; }
+}
 
 * {
     margin: 0;
