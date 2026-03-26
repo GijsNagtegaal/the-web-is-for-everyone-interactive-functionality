@@ -15,130 +15,267 @@ app.set('view engine', 'liquid')
 
 // --- Helpers ---
 
-// Deep fetch data (including nested quest_options)
 const fetchData = async (endpoint) => {
     const response = await fetch(`${API_BASE}/${endpoint}`)
     const json = await response.json()
     return json.data
 }
 
-// Ensure images always have the full URL
-const directusAssetUrl = (id) => id ? `https://fdnd-agency.directus.app/assets/${id}` : '/assets/images/placeholder.webp'
+const directusAssetUrl = (asset) => {
+    const id = (asset && typeof asset === 'object') ? asset.id : asset
+    return id 
+        ? `https://fdnd-agency.directus.app/assets/${id}` 
+        : '/assets/images/placeholder.webp'
+}
 
-// Prepare plant and quest data for Liquid
 const normalizePlant = (plant) => {
     if (!plant) return null
+    const mappedType = plant.quest_type === 'labels' ? 'button' : 'image'
     return {
         ...plant,
         in_bloom: directusAssetUrl(plant.in_bloom),
         not_in_bloom: directusAssetUrl(plant.not_in_bloom),
-        // Liquid expects 'title', 'description', and 'options'
         title: plant.quest_title || 'Opdracht',
         description: plant.quest_text, 
-        correct_answer: (plant.quest_options || []).find(o => o.correct)?.value,
-        options: (plant.quest_options || []).map(o => ({
-            text: o.label || o.value,
-            value: o.value,
-            image_url: o.image ? directusAssetUrl(o.image) : null
+        type: mappedType,
+        correct_answer: (plant.quest_options || []).find(option => option.correct)?.value,
+        options: (plant.quest_options || []).map(option => ({
+            text: option.label || option.value,
+            value: option.value,
+            image_url: directusAssetUrl(option.image)
         })),
         xp: 25
     }
 }
 
-// Get IDs of plants already found by the user
+// Returns a Set of plant IDs collected by the user
 const getCollectedIds = async (userId) => {
     const data = await fetchData(`frankendael_users_plants?filter[frankendael_users_id][_eq]=${userId}`)
-    return new Set(data.map(item => typeof item.frankendael_plants_id === 'object' ? item.frankendael_plants_id.id : item.frankendael_plants_id))
+    return new Set(data.map(item => {
+        return typeof item.frankendael_plants_id === 'object' ? item.frankendael_plants_id.id : item.frankendael_plants_id
+    }))
+}
+
+// Returns full plant objects collected by the user (with nested fields)
+const getCollectedPlants = async (userId) => {
+    const data = await fetchData(`frankendael_users_plants?filter[frankendael_users_id][_eq]=${userId}&fields=*,frankendael_plants_id.*.*`)
+    return data.map(item => item.frankendael_plants_id).filter(Boolean)
+}
+
+const userAlreadyCollectedPlant = async ({ userId, plantId }) => {
+    const data = await fetchData(`frankendael_users_plants?filter[frankendael_users_id][_eq]=${userId}&filter[frankendael_plants_id][_eq]=${plantId}`)
+    return data && data.length > 0
+}
+
+// Extracts plant IDs from a zone's plants junction array
+const getPlantIdsFromZone = (zone) => {
+    if (!zone.plants?.length) return []
+    return zone.plants.map(p => {
+        // junction object: { id, frankendael_plants_id, frankendael_zones_id }
+        return typeof p === 'object' ? p.frankendael_plants_id : p
+    }).filter(Boolean)
 }
 
 // --- Routes ---
 
-// Home: News and Plants
 app.get('/', async (req, res) => {
-    const [zones, plants, news] = await Promise.all([
+    const [allZones, allNews, collectedPlants] = await Promise.all([
         fetchData('frankendael_zones'),
-        fetchData('frankendael_plants?fields=*.*'),
-        fetchData('frankendael_news')
+        fetchData('frankendael_news'),
+        getCollectedPlants(USER_ID)
     ])
-    const items = plants.map(p => ({ ...normalizePlant(p), main_zone: zones.find(z => z.id === p.zones[0]) }))
-    const normalizedNews = news.map(n => ({ ...n, image: directusAssetUrl(n.image) }))
-    res.render('index.liquid', { zones, plants: items, news: normalizedNews, zone_type: 'home' })
+
+    const plantsWithZones = collectedPlants.map(plant => {
+        const firstZoneEntry = plant.zones?.[0]
+        const zoneId = typeof firstZoneEntry === 'object' ? firstZoneEntry.frankendael_zones_id : firstZoneEntry
+        return { 
+            ...normalizePlant(plant), 
+            main_zone: allZones.find(zone => zone.id === zoneId) ?? null
+        }
+    })
+
+    const normalizedNews = allNews.map(newsItem => ({ 
+        ...newsItem, 
+        image: directusAssetUrl(newsItem.image) 
+    }))
+
+    res.render('index.liquid', { 
+        zones: allZones, 
+        plants: plantsWithZones, 
+        news: normalizedNews, 
+        zone_type: 'home',
+        current_path: req.path
+    })
 })
 
-// Map: Show zones and check for available quests
+// Veldverkenner (Map)
 app.get('/veldverkenner', async (req, res) => {
-    const [zones, plants, collected] = await Promise.all([
-        fetchData('frankendael_zones'),
+    const [allZones, allPlants, collectedIds] = await Promise.all([
+        fetchData('frankendael_zones?fields=*.*'),
         fetchData('frankendael_plants?fields=*.*'),
         getCollectedIds(USER_ID)
     ])
-    const zonesWithQuest = zones.map(z => {
-        const plant = plants.find(p => p.zones.includes(z.id) && p.quest_text)
-        z.quest = plant ? { ...normalizePlant(plant), plant: normalizePlant(plant) } : null
-        return z
+
+    const zonesWithQuestData = allZones.map(zone => {
+        const plantIdsInZone = getPlantIdsFromZone(zone)
+        const plantInZone = allPlants.find(plant => 
+            plantIdsInZone.includes(plant.id) && plant.quest_text
+        )
+        const normalized = normalizePlant(plantInZone)
+        zone.quest = normalized ? { ...normalized, plant: normalized } : null
+        return zone
     })
-    res.render('veldverkenner.liquid', { zones: zonesWithQuest, progress: collected.size })
+
+    res.render('veldverkenner.liquid', { 
+        zones: zonesWithQuestData, 
+        progress: collectedIds.size, 
+        zone_type: 'veldverkenner',
+        current_path: req.path
+    })
 })
 
-// Zone: Plants inside a specific zone
+// Zone Detail — show ALL plants in the zone
 app.get('/veldverkenner/:zone_slug', async (req, res) => {
-    const [zoneData, collected] = await Promise.all([
-        fetchData(`frankendael_zones?filter[slug][_eq]=${req.params.zone_slug}`),
+    const [zoneData, collectedIds] = await Promise.all([
+        fetchData(`frankendael_zones?filter[slug][_eq]=${req.params.zone_slug}&fields=*.*`),
         getCollectedIds(USER_ID)
     ])
-    const zone = zoneData[0]
-    const plants = zone.plants?.length ? await fetchData(`frankendael_plants?filter[id][_in]=${zone.plants.join(',')}&fields=*.*`) : []
-    const items = plants.map(p => {
-        const normalized = normalizePlant(p)
-        return { ...normalized, collected: collected.has(p.id), quest: p.quest_text ? normalized : null }
+
+    const currentZone = zoneData[0]
+
+    // Extract plant IDs from the junction objects in the zone
+    const plantIds = getPlantIdsFromZone(currentZone)
+
+    const plantsInZone = plantIds.length 
+        ? await fetchData(`frankendael_plants?filter[id][_in]=${plantIds.join(',')}&fields=*.*`) 
+        : []
+
+    const normalizedPlants = plantsInZone.map(plant => {
+        const normalized = normalizePlant(plant)
+        return { 
+            ...normalized, 
+            collected: collectedIds.has(plant.id), 
+            quest: plant.quest_title ? normalized : null 
+        }
     })
-    res.render('zone.liquid', { zone, plants: items, zone_slug: req.params.zone_slug, zone_type: zone.type })
+
+    res.render('zone.liquid', { 
+        zone: currentZone, 
+        plants: normalizedPlants, 
+        zone_slug: req.params.zone_slug, 
+        zone_type: currentZone.type,
+        current_path: req.path
+    })
 })
 
-// Detail: Show Quest or Plant info
+// Item Detail (Quest/Plant)
 app.get('/veldverkenner/:zone_slug/:item_slug', async (req, res) => {
     const zoneData = await fetchData(`frankendael_zones?filter[slug][_eq]=${req.params.zone_slug}`)
     const plantData = await fetchData(`frankendael_plants?filter[slug][_eq]=${req.params.item_slug}&fields=*.*`)
-    const plant = normalizePlant(plantData[0])
+    const currentPlant = normalizePlant(plantData[0])
     
-    if (plant?.quest_text) {
-        res.render('opdracht.liquid', { quest: plant, plant, zone: zoneData[0], zone_slug: req.params.zone_slug, state: req.query.step || 'intro', user_id: USER_ID })
+    const renderData = {
+        quest: currentPlant, 
+        plant: currentPlant, 
+        zone: zoneData[0], 
+        zone_slug: req.params.zone_slug, 
+        state: req.query.step || 'intro', 
+        user_id: USER_ID,
+        zone_type: zoneData[0].type,
+        current_path: req.path
+    }
+
+    if (currentPlant?.quest_title) {
+        res.render('opdracht.liquid', renderData)
     } else {
-        res.render('plant-detail.liquid', { plant, zone: zoneData[0], zone_slug: req.params.zone_slug })
+        res.render('plant-detail.liquid', renderData)
     }
 })
 
-// POST: Save discovery
-app.post('/veldverkenner/:zone_slug/:item_slug', async (req, res) => {
-    await fetch(`${API_BASE}/frankendael_users_plants`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ frankendael_users_id: req.body.user_id || USER_ID, frankendael_plants_id: req.body.plant_id })
-    })
-    res.redirect(`/veldverkenner/${req.params.zone_slug}`)
-})
-
-// News List
+// News Overview
 app.get('/nieuws', async (req, res) => {
-    const news = await fetchData('frankendael_news')
-    res.render('nieuws.liquid', { news: news.map(n => ({ ...n, image: directusAssetUrl(n.image) })) })
+    const newsData = await fetchData('frankendael_news')
+    const normalizedNews = newsData.map(newsItem => ({ 
+        ...newsItem, 
+        image: directusAssetUrl(newsItem.image) 
+    }))
+    res.render('nieuws.liquid', { 
+        news: normalizedNews, 
+        zone_type: 'news',
+        current_path: req.path
+    })
 })
 
 // News Detail
 app.get('/nieuws/:slug', async (req, res) => {
     const data = await fetchData(`frankendael_news?filter[slug][_eq]=${req.params.slug}`)
-    const item = { ...data[0], image: directusAssetUrl(data[0].image) }
-    res.render('news-detail.liquid', { newsItem: item })
+    const article = { ...data[0], image: directusAssetUrl(data[0].image) }
+    res.render('news-detail.liquid', { 
+        newsItem: article, 
+        zone_type: 'news',
+        current_path: req.path
+    })
 })
 
-// Collection
+// Collection — only show plants collected by the user
 app.get('/collectie', async (req, res) => {
-    const [plants, zones] = await Promise.all([
-        fetchData('frankendael_plants?fields=*.*'), 
+    const [collectedPlants, allZones] = await Promise.all([
+        getCollectedPlants(USER_ID),
         fetchData('frankendael_zones')
     ])
-    const items = plants.map(p => ({ ...normalizePlant(p), main_zone: zones.find(z => z.id === p.zones?.[0]) }))
-    res.render('collectie.liquid', { plants: items, zone_type: 'collectie' })
+
+    const plantsWithZoneDetails = collectedPlants.map(plant => {
+        const firstZoneEntry = plant.zones?.[0]
+        const zoneId = typeof firstZoneEntry === 'object' ? firstZoneEntry.frankendael_zones_id : firstZoneEntry
+        return {
+            ...normalizePlant(plant),
+            main_zone: allZones.find(zone => zone.id === zoneId) ?? null
+        }
+    })
+
+    res.render('collectie.liquid', { 
+        plants: plantsWithZoneDetails, 
+        zone_type: 'collectie',
+        current_path: req.path
+    })
 })
 
-app.listen(8000, () => console.log('Running at http://localhost:8000'))
+// POST: Save quest progress to Directus
+app.post('/veldverkenner/:zone_slug/:item_slug', async (request, response) => {
+    const { plant_id, user_id } = request.body
+    const { zone_slug } = request.params 
+
+    try {
+        const userId = Number.isFinite(parseInt(user_id, 10)) ? parseInt(user_id, 10) : USER_ID
+        const plantId = parseInt(plant_id, 10)
+        if (!Number.isFinite(plantId)) {
+            return response.status(400).send('Ongeldige plant_id')
+        }
+
+        if (await userAlreadyCollectedPlant({ userId, plantId })) {
+            return response.redirect(`/veldverkenner/${zone_slug}`)
+        }
+
+        const res = await fetch(`${API_BASE}/frankendael_users_plants`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                frankendael_users_id: userId,
+                frankendael_plants_id: plantId
+            })
+        })
+
+        if (res.ok) {
+            response.redirect(`/veldverkenner/${zone_slug}`)
+        } else {
+            const errorMsg = await res.text()
+            console.error('Directus error:', errorMsg)
+            throw new Error('Failed to post to Directus')
+        }
+    } catch (error) {
+        console.error('Save error:', error)
+        response.status(500).send('Fout bij opslaan van je voortgang.')
+    }
+})
+
+app.listen(8000, () => console.log('Server started on http://localhost:8000'))

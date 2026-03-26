@@ -9,7 +9,7 @@
                     content: newsitem.title,
                 %}
             </div>
-            <img class="landscape" src="https://fdnd-agency.directus.app/assets/{{ newsitem.image }}" alt="{{ newsitem.title }}">
+            <img class="landscape" src="{{ newsitem.image }}" alt="{{ newsitem.title }}">
             {% if current_path == '/' %}
                 <p>{{ newsitem.body | truncate: 40 }}</p>
         {% endif %}
