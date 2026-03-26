@@ -86,7 +86,8 @@ window.addEventListener("load", () => {
                 duration: gsap.utils.random(4, 8),
                 repeat: -1,
                 ease: "none",
-                delay: gsap.utils.random(0, 10)
+                delay: gsap.utils.random(0, .5)
+
             });
 
             // Swaying
@@ -126,7 +127,7 @@ window.addEventListener("load", () => {
 window.addEventListener("load", () => {
     // Check if the URL contains "correct"
     const url = window.location.search;
-    
+
     if (url.includes("step=correct") && !url.includes("incorrect")) {
         
         const duration = 3 * 1000;

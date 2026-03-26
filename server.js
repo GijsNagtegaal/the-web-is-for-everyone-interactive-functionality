@@ -235,16 +235,47 @@ app.get('/collectie', async (req, res) => {
     })
 })
 
-// Plant Detail from collection — always renders plant-detail
+// 1. Blooming Collection
+app.get('/collectie/in_bloom', async (req, res) => {
+    const [collectedPlants, allZones] = await Promise.all([
+        getCollectedPlants(USER_ID),
+        fetchData('frankendael_zones')
+    ])
+
+    const plants = collectedPlants
+        .filter(plant => plant.zones && plant.zones.length > 0)
+        .map(plant => {
+            const firstZoneEntry = plant.zones[0]
+            const zoneId = typeof firstZoneEntry === 'object' ? firstZoneEntry.frankendael_zones_id : firstZoneEntry
+            return {
+                ...normalizePlant(plant),
+                main_zone: allZones.find(zone => zone.id === zoneId) ?? null
+            }
+        })
+
+    res.render('collectie.liquid', { plants, title: 'In Bloei', zone_type: 'collectie', current_path: req.path })
+})
+
+// 2. Not in Bloom (No Zones)
+app.get('/collectie/not_in_bloom', async (req, res) => {
+    const collectedPlants = await getCollectedPlants(USER_ID)
+
+    const plants = collectedPlants
+        .filter(plant => !plant.zones || plant.zones.length === 0)
+        .map(plant => normalizePlant(plant))
+
+    res.render('collectie.liquid', { plants, title: 'Niet in Bloei', zone_type: 'collectie', current_path: req.path })
+})
+
+// 3. Plant Detail (KEEP THIS LAST)
 app.get('/collectie/:plant_slug', async (req, res) => {
     const plantData = await fetchData(`frankendael_plants?filter[slug][_eq]=${req.params.plant_slug}&fields=*.*`)
-    const currentPlant = normalizePlant(plantData[0])
+    
+    // Safety check: if Directus finds nothing, don't try to render
+    if (!plantData.length) return res.status(404).send('Plant niet gevonden')
 
-    res.render('plant-detail.liquid', { 
-        plant: currentPlant,
-        zone_type: 'collectie',
-        current_path: req.path
-    })
+    const currentPlant = normalizePlant(plantData[0])
+    res.render('plant-detail.liquid', { plant: currentPlant, zone_type: 'collectie', current_path: req.path })
 })
 
 app.get('/account', async (req, res) => {

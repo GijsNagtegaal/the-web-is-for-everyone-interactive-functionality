@@ -2,8 +2,9 @@
 <main class="nieuws">
     <section class="header">
         {% render 'partials/linkback.liquid' %}
-        <h1>{{ current_path | remove: '/' | capitalize }}</h1>
+        <h1>Veld {{ current_path | remove: '/' | capitalize }}</h1>
     </section>
+
     {% render 'partials/newsitems.liquid', news: news, current_path: current_path %}
 </main>
 {% render 'partials/foot.liquid', current_path: current_path %}

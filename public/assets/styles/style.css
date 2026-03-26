@@ -457,6 +457,17 @@ main.quest {
             z-index: 1;
         }
 
+        a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            width: 90vw;
+            text-align: center;
+            margin-top: 1rem;
+            color: var(--dark-text)
+        }
+
         article {
             position: relative;
             display: flex;
@@ -488,15 +499,75 @@ main.nieuws {
     section.header {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
-        align-items: center;
 
         a.back {
             grid-column: 1;
-        }
+        }       
 
         h1 {
             grid-column: 2;
-            justify-self: center;
+            align-self:center;
+        }
+        p {
+            grid-column: 3;
+        }
+
+        article {
+            grid-column: 1 / span 3;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+
+
+            ul {
+                display: flex;
+                justify-content: space-evenly;
+                gap: 2rem;
+            }
+
+            a {
+                color: var(--dark-text);
+                padding: 1rem;
+            }
+        }
+    }
+}
+
+/***********************************
+collectie page
+***********************************/
+
+main.collectie {
+    nav {
+        display: flex;
+        position: sticky;
+        top: 0;
+        justify-content: center;
+        background-color: var(--light-background);
+        padding-block: 1rem;
+        width: 100%;
+
+        a {
+            padding: 0.5rem 1.5rem;
+            text-decoration: none;
+            color: var(--dark-text);
+            transition: all 0.3s ease;
+            width: 50%;
+            border-radius: 1rem 0 0 1rem;
+            border: 2px solid white;
+            border-right: none;
+            text-align: center;
+        
+            &:nth-of-type(2) {
+                border-radius: 0 1rem 1rem 0 ;
+                border: 2px solid white;
+                border-left: none;
+            }
+
+            &.active {
+                background-color: var(--active);
+                color: var(--light-text);
+            }
         }
     }
 }
