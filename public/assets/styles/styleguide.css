@@ -63,16 +63,17 @@ img, video {
 
 body {
 
-
     color-scheme: light dark;
+    transition: background-color, color, .3s linear;
 
     &:has(#color-mode-light:checked) {
-    color-scheme: light;
+        color-scheme: light;
     }
     
     &:has(#color-mode-dark:checked) {
         color-scheme: dark;
     }
+
     /* Added fallback for light dark mode dark mode */
     @media (prefers-color-scheme: dark) {
         --light-background: hsl(0, 0%, 12%);
@@ -246,6 +247,15 @@ main:not(.veldverkenner) {
 
     &.logout {
         background-color: var(--incorrect);
+        width: 100%;
+        border: none;
+    }
+
+
+    &.reset {
+        background-color: transparent;
+        border: 2px solid var(--incorrect);
+        width: 100%;
     }
 
     &.start {

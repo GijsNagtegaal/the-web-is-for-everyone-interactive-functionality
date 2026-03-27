@@ -370,6 +370,13 @@ ul.quest {
     margin-block: 1rem;
 }
 
+@keyframes flowIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* partial detailpage.liquid */
 section.detailpage {
     color: var(--dark-text);
@@ -393,7 +400,14 @@ section.detailpage {
     }
 
     img {
-        bac
-    }
 
+    }
 }
+
+/* css to transform headings, will come back later */
+
+/* will-change: translateY;
+    opacity: 0;
+    margin-block: 1rem;
+    transform: translateY(1.875rem);
+    animation: flowIn 0.4s ease-in forwards; */

@@ -80,36 +80,54 @@ const getPlantIdsFromZone = (zone) => {
 }
 
 // --- Routes ---
-
 app.get('/', async (req, res) => {
-    const [allZones, allNews, collectedPlants] = await Promise.all([
-        fetchData('frankendael_zones'),
-        fetchData('frankendael_news'),
-        getCollectedPlants(USER_ID)
-    ])
+    // 1. Move variable declarations outside the try block so they are scoped to the function
+    let user = null; 
+    const userId = 2; // Gijs
+    const url = `https://fdnd-agency.directus.app/items/frankendael_users/${userId}`;
 
-    const plantsWithZones = collectedPlants.map(plant => {
-        const firstZoneEntry = plant.zones?.[0]
-        const zoneId = typeof firstZoneEntry === 'object' ? firstZoneEntry.frankendael_zones_id : firstZoneEntry
-        return { 
-            ...normalizePlant(plant), 
-            main_zone: allZones.find(zone => zone.id === zoneId) ?? null
-        }
-    })
+    try {
+        // 2. Wrap all your async operations in a single Promise.all or handle them sequentially
+        const [allZones, allNews, collectedPlants] = await Promise.all([
+            fetchData('frankendael_zones'),
+            fetchData('frankendael_news'),
+            getCollectedPlants(USER_ID)
+        ]);
 
-    const normalizedNews = allNews.map(newsItem => ({ 
-        ...newsItem, 
-        image: directusAssetUrl(newsItem.image) 
-    }))
+        const response = await fetch(url);
+        const result = await response.json();
+        user = result.data;
 
-    res.render('index.liquid', { 
-        zones: allZones, 
-        plants: plantsWithZones, 
-        news: normalizedNews, 
-        zone_type: 'home',
-        current_path: req.path
-    })
-})
+        // 3. Process your data after fetching
+        const plantsWithZones = collectedPlants.map(plant => {
+            const firstZoneEntry = plant.zones?.[0];
+            const zoneId = typeof firstZoneEntry === 'object' ? firstZoneEntry.frankendael_zones_id : firstZoneEntry;
+            return { 
+                ...normalizePlant(plant), 
+                main_zone: allZones.find(zone => zone.id === zoneId) ?? null
+            };
+        });
+
+        const normalizedNews = allNews.map(newsItem => ({ 
+            ...newsItem, 
+            image: directusAssetUrl(newsItem.image) 
+        }));
+
+        // 4. Render inside the try block (or ensure variables are accessible outside)
+        res.render('index.liquid', { 
+            zones: allZones, 
+            plants: plantsWithZones, 
+            news: normalizedNews, 
+            zone_type: 'home',
+            current_path: req.path,
+            user: user
+        });
+
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        res.status(500).send("Internal Server Error");
+    }
+});
 
 // Veldverkenner (Map)
 app.get('/veldverkenner', async (req, res) => {
