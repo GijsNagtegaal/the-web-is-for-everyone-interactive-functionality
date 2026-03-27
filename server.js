@@ -5,7 +5,7 @@ import path from 'path';
 
 const app = express()
 const API_BASE = 'https://fdnd-agency.directus.app/items'
-const USER_ID = 2
+const USER_ID = 5
 
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static('public'))
@@ -83,7 +83,7 @@ const getPlantIdsFromZone = (zone) => {
 app.get('/', async (req, res) => {
     // 1. Move variable declarations outside the try block so they are scoped to the function
     let user = null; 
-    const userId = 2; // Gijs
+    const userId = 5; // Gijs
     const url = `https://fdnd-agency.directus.app/items/frankendael_users/${userId}`;
 
     try {

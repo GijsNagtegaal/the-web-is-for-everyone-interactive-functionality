@@ -784,6 +784,7 @@ Animations
         transform: scale(1);
     }
 }
+
 @keyframes addtocollection {
     0% {
         transform: translate(-100vw, 50dvh) scale(1) rotate(0deg);
